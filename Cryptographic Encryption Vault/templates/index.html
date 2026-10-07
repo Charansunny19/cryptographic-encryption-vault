@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cryptographic Encryption Vault</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <div class="shield">🔐</div>
+      <div>
+        <p class="eyebrow">SECURE FILE PROTECTION</p>
+        <h1>Cryptographic Encryption Vault</h1>
+        <p class="subtitle">Encrypt and restore multiple files with AES-256-GCM and a master passphrase.</p>
+      </div>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if download_name %}
+      <div class="download-card">
+        <div>
+          <strong>Encrypted vault ready</strong>
+          <span>{{ download_name }}</span>
+        </div>
+        <a class="button" href="{{ url_for('download', name=download_name) }}">Download Vault</a>
+      </div>
+    {% endif %}
+
+    <section class="grid">
+      <form class="card" action="/encrypt" method="POST" enctype="multipart/form-data">
+        <div class="card-icon">🛡️</div>
+        <h2>Encrypt Files</h2>
+        <p class="muted">Select multiple files, including files from subdirectories.</p>
+
+        <label>Vault name</label>
+        <input type="text" name="vault_name" value="my_vault" required>
+
+        <label>Select files</label>
+        <input class="file-input" type="file" name="files" multiple required>
+
+        <label>Master passphrase</label>
+        <input type="password" name="password" minlength="8" placeholder="Minimum 8 characters" required>
+
+        <button type="submit">🔒 Encrypt & Create Vault</button>
+      </form>
+
+      <form class="card" action="/decrypt" method="POST" enctype="multipart/form-data">
+        <div class="card-icon">🔓</div>
+        <h2>Restore Files</h2>
+        <p class="muted">Upload an encrypted vault ZIP and enter the original passphrase.</p>
+
+        <label>Encrypted vault</label>
+        <input class="file-input" type="file" name="vault" accept=".zip" required>
+
+        <label>Master passphrase</label>
+        <input type="password" name="decrypt_password" placeholder="Enter your passphrase" required>
+
+        <button class="restore" type="submit">🔓 Decrypt & Restore</button>
+      </form>
+    </section>
+
+    <section class="security">
+      <h2>Security Design</h2>
+      <div class="features">
+        <div><b>AES-256-GCM</b><span>Authenticated encryption</span></div>
+        <div><b>PBKDF2-SHA256</b><span>600,000 key-derivation iterations</span></div>
+        <div><b>Random Salt + Nonce</b><span>Fresh cryptographic values</span></div>
+        <div><b>Key Backup</b><span>Parameters backed up, password never stored</span></div>
+      </div>
+    </section>
+
+    <footer>Cryptographic Encryption Vault • Python + Flask + AES-GCM</footer>
+  </main>
+</body>
+</html>
